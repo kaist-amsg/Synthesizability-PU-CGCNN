@@ -18,7 +18,7 @@ If you want to use cif data in the folder named as “cif_files”, following fi
 #### 2) atom_init.json: a JSON file that stores the initialization vector for each element.
 #### 3) ID.cif: a CIF file that recodes the crystal structure, where ID is the unique ID for the crystal.
 ex) If you want to generate crystal graph with cutoff radius 8A, maximum 12 neighbors:<br>
-`python generate_crystal_graph.py --root ./cif_files --n 12 --r 8 --f ./saved_crystal_graph`<br>
+`python generate_crystal_graph.py --cifs ./cif_files --n 12 --r 8 --f ./saved_crystal_graph`<br>
 Then, you will obtain preloaded crystal graph files in folder “saved_crystal_graph”<br>
 
 ### [2] Train a Synthesizability-PU-CGCNN model
