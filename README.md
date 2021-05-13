@@ -29,8 +29,8 @@ After training, prediction results for test-unlabeled data (csv file) correspond
 Result of bootstrap aggregating is saved as 'test_results_ensemble_100models.csv'<br>
 
 ### [3] Predict synthesizability of new crystals with pre-trained models
-`python predict_PU_learning.py --bag 100 --graph ./saved_crystal_graph --cifs ./cifs --modeldir ./trained_models`<br>
+`python predict_PU_learning.py --bag 100 --graph ./saved_crystal_graph --cifs ./cif_files --modeldir ./trained_models`<br>
 
 Load crystal graph information from 'saved_crystal_graph' folder and pre-trained models from 'trained_models' folder.<br>
-Predict synthesizability of crystal structures in 'cifs' folder (with id_prop.csv file) using the loaded models.<br>
+Predict synthesizability of crystal structures in 'cif_files' folder (with id_prop.csv file) using the loaded models.<br>
 Result of bootstrap aggregating is saved as 'test_results_ensemble_100models.csv'
