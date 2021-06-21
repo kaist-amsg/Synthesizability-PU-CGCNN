@@ -27,6 +27,7 @@ Then, you will obtain preloaded crystal graph files in folder “saved_crystal_g
 Load crystal graph information from 'saved_crystal_graph folder' and generate data split files for PU-learning in 'split' folder.<br>
 After training, prediction results for test-unlabeled data (csv file) corresponding to each iteration will be generated.<br>
 Result of bootstrap aggregating is saved as 'test_results_ensemble_100models.csv'<br>
+You can change the number of bootstrap samples using '--bag' option<br>
 
 ### [3] Predict synthesizability of new crystals with pre-trained models
 `python predict_PU_learning.py --bag 100 --graph ./saved_crystal_graph --cifs ./cif_files --modeldir ./trained_models`<br>
