@@ -22,7 +22,7 @@ ex) If you want to generate crystal graph with cutoff radius 8A, maximum 12 neig
 Then, you will obtain preloaded crystal graph files in folder “saved_crystal_graph”<br>
 
 ### [2] Train a Synthesizability-PU-CGCNN model
-`python main_PU_learning.py --bag 100 --graph ./saved_crystal_graph --split ./split`<br>
+`python main_PU_learning.py --bag 100 --graph ./saved_crystal_graph --cifs ./cif_files --split ./split`<br>
 
 Load crystal graph information from 'saved_crystal_graph folder' and generate data split files for PU-learning in 'split' folder.<br>
 After training, prediction results for test-unlabeled data (csv file) corresponding to each iteration will be generated.<br>
