@@ -92,7 +92,7 @@ def collate_pool(dataset_list):
         batch_cif_ids
 
 
-def split_bagging(id_prop, bagging_size, folder):
+def split_bagging(id_prop,start, bagging_size, folder):
     df = pd.read_csv(id_prop, header=None)
 
     # Split positive/unlabeled data
@@ -121,7 +121,7 @@ def split_bagging(id_prop, bagging_size, folder):
     os.makedirs(folder, exist_ok=True)
 
     # Sample negative data for training
-    for i in tqdm(range(bagging_size)):
+    for i in tqdm(range(start,start+bagging_size)):
         # Randomly labeling to negative
         negative = unlabeled.sample(n=len(positive[0]))
         valid_negative = negative.sample(frac=0.2,random_state=1234)
