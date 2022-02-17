@@ -68,7 +68,7 @@ parser.add_argument('--graph', type=str, metavar='N',
                     help='Folder name for preloaded crystal graph files')
 parser.add_argument('--cifs', type=str, metavar='N',
                     help='Folder name containing cif files and id_prop.csv file')
-parser.add_argument('--restart', default=1, type=int, metavar='N',
+parser.add_argument('--restart', default=0, type=int, metavar='N',
                     help='Set restart point of bagging #')
 
 
@@ -105,7 +105,7 @@ def main():
 
 
     # Train/Valid/Test for all bagging loop
-    for bagging in range(args.restart-1, args.bag):
+    for bagging in range(args.restart, args.restart+args.bag):
 
         initial_time = time.time()
         best_mae_error = 0
