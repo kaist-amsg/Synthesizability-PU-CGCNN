@@ -70,43 +70,22 @@ class AtomCustomJSONInitializer(AtomInitializer):
         for key, value in elem_embedding.items():
             self._embedding[key] = np.array(value, dtype=float)
 
+def GetIterator():
+    if 'get_ipython' in locals().keys(): # it doesnt work in ipython
+        multiprocessing = None
+        return map
+    else: 
+        try: 
+            import multiprocessing
+            p = multiprocessing.Pool()
+            mapper = p.imap
+        except:
+            mapper = map
+    return mapper 
 
-parser = argparse.ArgumentParser(description='Neighbor Information Preloader of Crystal Graph Convolutional Neural Networks')
-parser.add_argument('--cifs', type=str, help='Root directory where .cif files exist')
-parser.add_argument('--n', type=int, default=12, help='The maximum number of neighbors while constructing the crystal graph')
-parser.add_argument('--r', type=float, default=8, help='The cutoff radius for searching neighbors')
-parser.add_argument('--dmin', type=float, default=0, help='The minimum distance for constructing GaussianDistance')
-parser.add_argument('--s', type=float, default=0.2, help='The step size for constructing GaussianDistance')
-parser.add_argument('--f', type=str, help='Folder name for saving crystal graph (.pickle files)')
-parser.add_argument('--idprop', type=str, default='id_prop.csv', help='id-prop.csv file')
-args = parser.parse_args()
-
-root_dir = args.cifs
-max_num_nbr = args.n
-radius = args.r
-fea_dict = {}
-
-assert os.path.exists(root_dir), 'root_dir does not exist!'
-id_prop_file = os.path.join(root_dir, args.idprop)
-assert os.path.exists(id_prop_file), 'id_prop.csv does not exist!'
-with open(id_prop_file) as f:
-    reader = csv.reader(f)
-    id_prop_data = [row for row in reader]
-
-random.seed(1234)
-random.shuffle(id_prop_data)
-atom_init_file = os.path.join(root_dir, 'atom_init.json')
-assert os.path.exists(atom_init_file), 'atom_init.json does not exist!'
-ari = AtomCustomJSONInitializer(atom_init_file)
-gdf = GaussianDistance(dmin=args.dmin, dmax=radius, step=args.s)
-
-pickle_folder = os.path.join(os.getcwd(), args.f)
-if not os.path.exists(pickle_folder):
-    os.system('mkdir '+pickle_folder)
-
-for i in tqdm(range(len(id_prop_data))):
-    cif_id, target = id_prop_data[i]
-
+def preprocess(inputs):
+    cif_id, target = inputs
+    if os.path.exists(pickle_folder+'/'+cif_id+'.pickle'): return
     crystal = Structure.from_file(os.path.join(root_dir,cif_id+'.cif'))
     atom_fea = np.vstack([ari.get_atom_fea(crystal[j].specie.number)
                           for j in range(len(crystal))])
@@ -135,4 +114,44 @@ for i in tqdm(range(len(id_prop_data))):
     preload_data = ((atom_fea, nbr_fea, nbr_fea_idx), target, cif_id)
     with open(pickle_folder+'/'+cif_id+'.pickle', "wb") as f:
         pickle.dump(preload_data, f)
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Neighbor Information Preloader of Crystal Graph Convolutional Neural Networks')
+    parser.add_argument('--cifs', type=str, help='Root directory where .cif files exist')
+    parser.add_argument('--n', type=int, default=12, help='The maximum number of neighbors while constructing the crystal graph')
+    parser.add_argument('--r', type=float, default=8, help='The cutoff radius for searching neighbors')
+    parser.add_argument('--dmin', type=float, default=0, help='The minimum distance for constructing GaussianDistance')
+    parser.add_argument('--s', type=float, default=0.2, help='The step size for constructing GaussianDistance')
+    parser.add_argument('--f', type=str, help='Folder name for saving crystal graph (.pickle files)')
+    parser.add_argument('--idprop', type=str, default='id_prop.csv', help='id-prop.csv file')
+    args = parser.parse_args()
+
+    root_dir = args.cifs
+    max_num_nbr = args.n
+    radius = args.r
+    fea_dict = {}
+
+    assert os.path.exists(root_dir), 'root_dir does not exist!'
+    id_prop_file = os.path.join(root_dir, args.idprop)
+    assert os.path.exists(id_prop_file), 'id_prop.csv does not exist!'
+    with open(id_prop_file) as f:
+        reader = csv.reader(f)
+        id_prop_data = [row for row in reader]
+
+    random.seed(1234)
+    random.shuffle(id_prop_data)
+    atom_init_file = os.path.join(root_dir, 'atom_init.json')
+    assert os.path.exists(atom_init_file), 'atom_init.json does not exist!'
+    ari = AtomCustomJSONInitializer(atom_init_file)
+    gdf = GaussianDistance(dmin=args.dmin, dmax=radius, step=args.s)
+
+    pickle_folder = os.path.join(os.getcwd(), args.f)
+    if not os.path.exists(pickle_folder):
+        os.system('mkdir '+pickle_folder)
+    
+    mapper = GetIterator()
+    
+    for i in tqdm(mapper(preprocess, id_prop_data),total=len(id_prop_data)):
+        continue
+
 
