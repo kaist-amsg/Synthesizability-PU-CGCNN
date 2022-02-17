@@ -13,6 +13,7 @@ import torch.optim as optim
 import pickle
 import csv
 import gc
+from tqdm import tqdm
 from sklearn import metrics
 from torch.autograd import Variable
 from torch.optim.lr_scheduler import MultiStepLR
@@ -85,7 +86,7 @@ def preload(preload_folder, id_prop_file):
         reader = csv.reader(g)
         cif_list = [row[0] for row in reader]
 
-    for cif_id in cif_list:
+    for cif_id in tqdm(cif_list):
         with open(preload_folder+'/'+cif_id+'.pickle', 'rb') as f:
             data.append(pickle.load(f))
 
@@ -101,7 +102,7 @@ def main():
     Test: Remaining unlabeled data for predicting which not included in training set as negative labeled data.
     '''
 
-    split_bagging(os.path.join(args.cifs, 'id_prop.csv'), args.bag, args.split), 
+    split_bagging(os.path.join(args.cifs, 'id_prop.csv'), args.restart, args.bag, args.split), 
 
 
     # Train/Valid/Test for all bagging loop
